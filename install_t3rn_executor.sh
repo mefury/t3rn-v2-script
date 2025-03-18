@@ -111,10 +111,23 @@ info "Detected distribution: $DISTRO"
 # Set directory for installation
 INSTALL_DIR="${HOME}/t3rn"
 info "Installation directory: $INSTALL_DIR"
+
+# Clean up any existing installation
 if [ -d "$INSTALL_DIR" ]; then
-    if ! confirm "Directory $INSTALL_DIR already exists. Do you want to continue and possibly overwrite existing files?"; then
-        info "Please provide a different installation path or move the existing directory"
-        exit 1
+    section "Cleaning Up Previous Installation"
+    info "Found existing t3rn directory at $INSTALL_DIR"
+    
+    if confirm "Do you want to remove the existing installation and start fresh?"; then
+        info "Removing existing t3rn installation..."
+        rm -rf "$INSTALL_DIR"
+        check_command "Failed to remove existing installation"
+        info "Previous installation removed successfully"
+        
+        # Recreate empty installation directory
+        mkdir -p "$INSTALL_DIR"
+        check_command "Failed to create installation directory"
+    else
+        error_exit "Installation aborted by user. Please backup or remove the existing installation manually."
     fi
 else
     mkdir -p "$INSTALL_DIR"
@@ -163,26 +176,6 @@ info "Downloading executor binary..."
 DOWNLOAD_URL="https://github.com/t3rn/executor-release/releases/download/${TAG_NAME}/executor-linux-${TAG_NAME}.tar.gz"
 wget "$DOWNLOAD_URL" -O "executor-linux-${TAG_NAME}.tar.gz"
 check_command "Failed to download executor binary"
-
-# Verify download (optional)
-if confirm "Do you want to verify the download with SHA256 checksum?"; then
-    CHECKSUM_URL="https://github.com/t3rn/executor-release/releases/download/${TAG_NAME}/sha256sum.txt"
-    wget "$CHECKSUM_URL" -O sha256sum.txt
-    check_command "Failed to download checksum file"
-    
-    # Get expected checksum for this file
-    EXPECTED_CHECKSUM=$(grep "executor-linux-${TAG_NAME}.tar.gz" sha256sum.txt | awk '{print $1}')
-    if [ -z "$EXPECTED_CHECKSUM" ]; then
-        info "Could not find checksum for this file. Skipping verification."
-    else
-        ACTUAL_CHECKSUM=$(sha256sum "executor-linux-${TAG_NAME}.tar.gz" | awk '{print $1}')
-        if [ "$EXPECTED_CHECKSUM" = "$ACTUAL_CHECKSUM" ]; then
-            info "Checksum verification successful!"
-        else
-            error_exit "Checksum verification failed! Expected: $EXPECTED_CHECKSUM, Got: $ACTUAL_CHECKSUM"
-        fi
-    fi
-fi
 
 # Extract archive
 info "Extracting executor binary..."
