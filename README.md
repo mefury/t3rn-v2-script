@@ -116,6 +116,8 @@ For each network, you can specify:
 
 If you leave any endpoint blank, the script will use the default RPC for that network.
 
+> **Note**: When using custom RPCs, API processing is automatically disabled (`EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=false` and `EXECUTOR_PROCESS_ORDERS_API_ENABLED=false`). When using default RPCs, API processing is enabled for better reliability.
+
 ## Important Notes
 
 - **Security**: The script requires your private key for operation. Always review scripts before running them, especially those handling sensitive information.

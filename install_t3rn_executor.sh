@@ -203,7 +203,6 @@ export EXECUTOR_PROCESS_BIDS_ENABLED="true"
 export EXECUTOR_PROCESS_ORDERS_ENABLED="true"
 export EXECUTOR_PROCESS_CLAIMS_ENABLED="true"
 export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l2rn"
-export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API="true"
 
 # Ask for gas price
 read -p "Max L3 gas price in gwei (default: 100): " EXECUTOR_MAX_L3_GAS_PRICE
@@ -246,7 +245,9 @@ NETWORK_NAMES=(
 )
 
 # Ask user if they want to use custom RPC endpoints
+USE_CUSTOM_RPC=false
 if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
+    USE_CUSTOM_RPC=true
     # Initialize JSON structure
     RPC_ENDPOINTS="{"
     
@@ -292,6 +293,17 @@ else
 fi
 
 export RPC_ENDPOINTS
+
+# Set API processing settings based on RPC choice
+if [ "$USE_CUSTOM_RPC" = true ]; then
+    info "Using custom RPCs: Disabling API processing"
+    export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=false
+    export EXECUTOR_PROCESS_ORDERS_API_ENABLED=false
+else
+    info "Using default RPCs: Enabling API processing"
+    export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=true
+    export EXECUTOR_PROCESS_ORDERS_API_ENABLED=true
+fi
 
 section "Starting Executor"
 info "Starting t3rn executor with the configured settings..."
