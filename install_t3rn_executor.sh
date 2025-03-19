@@ -223,14 +223,75 @@ while [ -z "$PRIVATE_KEY_LOCAL" ]; do
 done
 export PRIVATE_KEY_LOCAL
 
-# Use default RPC endpoints
-export RPC_ENDPOINTS='{
+# RPC Configuration
+section "RPC Configuration"
+
+# Default RPC endpoints
+DEFAULT_RPC_ENDPOINTS='{
     "l2rn": ["https://b2n.rpc.caldera.xyz/http"],
     "arbt": ["https://arbitrum-sepolia.drpc.org", "https://sepolia-rollup.arbitrum.io/rpc"],
     "bast": ["https://base-sepolia-rpc.publicnode.com", "https://base-sepolia.drpc.org"],
     "opst": ["https://sepolia.optimism.io", "https://optimism-sepolia.drpc.org"],
     "unit": ["https://unichain-sepolia.drpc.org", "https://sepolia.unichain.org"]
 }'
+
+# Network names and descriptions
+declare -A NETWORK_NAMES
+NETWORK_NAMES=( 
+    ["l2rn"]="t3rn Network"
+    ["arbt"]="Arbitrum Sepolia"
+    ["bast"]="Base Sepolia"
+    ["opst"]="Optimism Sepolia"
+    ["unit"]="Unichain Sepolia"
+)
+
+# Ask user if they want to use custom RPC endpoints
+if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
+    # Initialize JSON structure
+    RPC_ENDPOINTS="{"
+    
+    # Get custom RPC for each network
+    for network_code in l2rn arbt bast opst unit; do
+        echo -e "\n${BOLD}${NETWORK_NAMES[$network_code]} (${network_code})${NC}"
+        
+        # Get primary RPC
+        read -p "Enter primary RPC endpoint: " primary_rpc
+        
+        if [ -z "$primary_rpc" ]; then
+            info "Using default RPC endpoint for ${NETWORK_NAMES[$network_code]}"
+            # Extract default from the DEFAULT_RPC_ENDPOINTS
+            primary_rpc=$(echo "$DEFAULT_RPC_ENDPOINTS" | jq -r ".[\"$network_code\"][0]")
+        fi
+        
+        # Start array
+        RPC_ENDPOINTS+="\"$network_code\": [\"$primary_rpc\""
+        
+        # Ask for secondary RPC (optional)
+        read -p "Enter secondary RPC endpoint (optional, press Enter to skip): " secondary_rpc
+        if [ ! -z "$secondary_rpc" ]; then
+            RPC_ENDPOINTS+=", \"$secondary_rpc\""
+        fi
+        
+        # Close array
+        RPC_ENDPOINTS+="]"
+        
+        # Add comma if not last item
+        if [ "$network_code" != "unit" ]; then
+            RPC_ENDPOINTS+=", "
+        fi
+    done
+    
+    # Close JSON structure
+    RPC_ENDPOINTS+="}"
+    
+    echo -e "\n${BOLD}Custom RPC Configuration:${NC}"
+    echo "$RPC_ENDPOINTS" | jq '.' || echo "$RPC_ENDPOINTS"
+else
+    info "Using default RPC endpoints"
+    RPC_ENDPOINTS="$DEFAULT_RPC_ENDPOINTS"
+fi
+
+export RPC_ENDPOINTS
 
 section "Starting Executor"
 info "Starting t3rn executor with the configured settings..."

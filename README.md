@@ -88,18 +88,33 @@ The installation script automates the following tasks:
 
 - System update and installation of dependencies
 - Download of the latest t3rn executor binary
-- Validation of the binary using SHA256 checksums (optional)
 - Configuration of environment variables
 - Setting up and starting the executor
+- Clean removal of previous installations (if any)
 
 ## Configuration
 
-The script only asks for essential inputs:
+The script asks for the following inputs:
 
 1. **Gas Price**: Maximum gas price in gwei (default: 100)
 2. **Private Key**: Your wallet's private key (required)
+3. **RPC Endpoints**: Choose between default RPCs or set custom endpoints for each chain
 
-All other settings use sensible defaults for the testnet environment.
+### Custom RPC Configuration
+
+The script allows you to configure custom RPC endpoints for each supported network:
+
+- **t3rn Network** (l2rn)
+- **Arbitrum Sepolia** (arbt)
+- **Base Sepolia** (bast)
+- **Optimism Sepolia** (opst)
+- **Unichain Sepolia** (unit)
+
+For each network, you can specify:
+- A primary RPC endpoint (required)
+- A secondary RPC endpoint (optional, for fallback)
+
+If you leave any endpoint blank, the script will use the default RPC for that network.
 
 ## Important Notes
 
