@@ -91,6 +91,15 @@ The installation script automates the following tasks:
 - Configuration of environment variables
 - Setting up and starting the executor
 - Clean removal of previous installations (if any)
+- **Auto-restart** functionality that restarts the executor if it crashes
+
+### Auto-Restart Feature
+
+The script includes a built-in auto-restart mechanism:
+
+- If the executor crashes or stops for any reason, it will automatically restart after 20 seconds
+- To exit the script completely, press Ctrl+C twice in quick succession (within 3 seconds)
+- This ensures your executor stays online even if it encounters temporary issues
 
 ## Configuration
 

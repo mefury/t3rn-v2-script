@@ -307,9 +307,46 @@ fi
 
 section "Starting Executor"
 info "Starting t3rn executor with the configured settings..."
-info "Press Ctrl+C to stop the executor"
+info "Auto-restart enabled: If the executor crashes, it will restart after 20 seconds"
+info "Press Ctrl+C twice in quick succession to exit completely"
 
-# Start the executor
-./executor
+# Function to handle SIGINT (Ctrl+C)
+trap_count=0
+trap_time=0
+
+trap ctrl_c INT
+
+ctrl_c() {
+    current_time=$(date +%s)
+    
+    if (( current_time - trap_time < 3 )); then
+        ((trap_count++))
+    else
+        trap_count=1
+    fi
+    
+    trap_time=$current_time
+    
+    if (( trap_count >= 2 )); then
+        echo -e "\n${BOLD}${RED}Exiting t3rn executor...${NC}"
+        exit 0
+    else
+        echo -e "\n${BOLD}${YELLOW}Press Ctrl+C again within 3 seconds to exit completely${NC}"
+        return 1
+    fi
+}
+
+# Start the executor with auto-restart
+while true; do
+    echo -e "\n${BOLD}${GREEN}Starting t3rn executor...${NC}"
+    ./executor
+    
+    # If executor exits with any status
+    echo -e "\n${BOLD}${YELLOW}Executor stopped. Restarting in 20 seconds...${NC}"
+    echo -e "${YELLOW}Press Ctrl+C twice in quick succession to exit${NC}"
+    
+    # Wait for 20 seconds before restarting
+    sleep 20
+done
 
 exit 0 
