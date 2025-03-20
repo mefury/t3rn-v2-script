@@ -88,10 +88,18 @@ The installation script automates the following tasks:
 
 - System update and installation of dependencies
 - Download of the latest t3rn executor binary
+- Version selection from the last 5 releases
 - Configuration of environment variables
 - Setting up and starting the executor
 - Clean removal of previous installations (if any)
 - **Auto-restart** functionality that restarts the executor if it crashes
+
+### Version Selection
+
+The script allows you to choose which version of the executor to install:
+- By default, it installs the latest version
+- Optionally, you can select from the last 5 available versions
+- Each version is displayed with its release tag for easy identification
 
 ### Auto-Restart Feature
 
@@ -125,7 +133,7 @@ For each network, you can specify:
 
 If you leave any endpoint blank, the script will use the default RPC for that network.
 
-> **Note**: When using custom RPCs, API processing is automatically disabled (`EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=false` and `EXECUTOR_PROCESS_ORDERS_API_ENABLED=false`). When using default RPCs, API processing is enabled for better reliability.
+> **Note**: When using custom RPCs, API processing is automatically disabled (`EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=false`). When using default RPCs, API processing is enabled for better reliability.
 
 ## Important Notes
 
@@ -161,4 +169,4 @@ This script is provided under the MIT License.
 
 ## Disclaimer
 
-This is an unofficial installation script. Please use at your own risk. 
+This is an unofficial installation script. Please use at your own risk.

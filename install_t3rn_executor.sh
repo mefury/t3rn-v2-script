@@ -162,14 +162,33 @@ fi
 section "Downloading t3rn Executor"
 cd "$INSTALL_DIR" || error_exit "Failed to navigate to installation directory"
 
-# Get latest release tag
-info "Fetching latest release information..."
-LATEST_RELEASE=$(curl -s https://api.github.com/repos/t3rn/executor-release/releases/latest)
+# Get release information
+info "Fetching release information..."
+RELEASES=$(curl -s "https://api.github.com/repos/t3rn/executor-release/releases?per_page=5")
 check_command "Failed to fetch release information"
 
-TAG_NAME=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
-check_command "Failed to parse release tag"
-info "Latest release: $TAG_NAME"
+# Ask if user wants to use an older version
+if confirm "Do you want to use an older version of the executor? (Default: No)"; then
+    echo -e "\n${BOLD}Available versions:${NC}"
+    # Display available versions
+    echo "$RELEASES" | jq -r 'map(.tag_name) | to_entries | .[] | "\(.key + 1). \(.value)"'
+    
+    # Get user choice
+    while true; do
+        read -p "Choose version (1-5): " version_choice
+        if [[ "$version_choice" =~ ^[1-5]$ ]]; then
+            TAG_NAME=$(echo "$RELEASES" | jq -r ".[$((version_choice-1))].tag_name")
+            break
+        else
+            echo -e "${RED}Invalid choice. Please enter a number between 1 and 5.${NC}"
+        fi
+    done
+else
+    # Use latest version
+    TAG_NAME=$(echo "$RELEASES" | jq -r '.[0].tag_name')
+fi
+
+info "Selected version: $TAG_NAME"
 
 # Download binary
 info "Downloading executor binary..."
@@ -298,11 +317,9 @@ export RPC_ENDPOINTS
 if [ "$USE_CUSTOM_RPC" = true ]; then
     info "Using custom RPCs: Disabling API processing"
     export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=false
-    export EXECUTOR_PROCESS_ORDERS_API_ENABLED=false
 else
     info "Using default RPCs: Enabling API processing"
     export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=true
-    export EXECUTOR_PROCESS_ORDERS_API_ENABLED=true
 fi
 
 section "Starting Executor"
@@ -349,4 +366,4 @@ while true; do
     sleep 20
 done
 
-exit 0 
+exit 0
