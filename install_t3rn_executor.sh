@@ -246,9 +246,10 @@ section "RPC Configuration"
 
 # Default RPC endpoints
 DEFAULT_RPC_ENDPOINTS='{
-    "l2rn": ["https://b2n.rpc.caldera.xyz/http"],
+    "l2rn": ["https://t3rn-b2n.blockpi.network/v1/rpc/public", "https://b2n.rpc.caldera.xyz/http"],
     "arbt": ["https://arbitrum-sepolia.drpc.org", "https://sepolia-rollup.arbitrum.io/rpc"],
     "bast": ["https://base-sepolia-rpc.publicnode.com", "https://base-sepolia.drpc.org"],
+    "blst": ["https://sepolia.blast.io", "https://blast-sepolia.drpc.org"],
     "opst": ["https://sepolia.optimism.io", "https://optimism-sepolia.drpc.org"],
     "unit": ["https://unichain-sepolia.drpc.org", "https://sepolia.unichain.org"]
 }'
@@ -259,6 +260,7 @@ NETWORK_NAMES=(
     ["l2rn"]="t3rn Network"
     ["arbt"]="Arbitrum Sepolia"
     ["bast"]="Base Sepolia"
+    ["blst"]="Blast Sepolia"
     ["opst"]="Optimism Sepolia"
     ["unit"]="Unichain Sepolia"
 )
@@ -271,7 +273,7 @@ if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
     RPC_ENDPOINTS="{"
     
     # Get custom RPC for each network
-    for network_code in l2rn arbt bast opst unit; do
+    for network_code in l2rn arbt bast blst opst unit; do
         echo -e "\n${BOLD}${NETWORK_NAMES[$network_code]} (${network_code})${NC}"
         
         # Get primary RPC
@@ -290,6 +292,12 @@ if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
         read -p "Enter secondary RPC endpoint (optional, press Enter to skip): " secondary_rpc
         if [ ! -z "$secondary_rpc" ]; then
             RPC_ENDPOINTS+=", \"$secondary_rpc\""
+        else
+            # Use default secondary RPC if none provided
+            secondary_rpc=$(echo "$DEFAULT_RPC_ENDPOINTS" | jq -r ".[\"$network_code\"][1]")
+            if [ "$secondary_rpc" != "null" ]; then
+                RPC_ENDPOINTS+=", \"$secondary_rpc\""
+            fi
         fi
         
         # Close array

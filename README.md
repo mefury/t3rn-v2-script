@@ -124,6 +124,7 @@ The script allows you to configure custom RPC endpoints for each supported netwo
 - **t3rn Network** (l2rn)
 - **Arbitrum Sepolia** (arbt)
 - **Base Sepolia** (bast)
+- **Blast Sepolia** (blst)
 - **Optimism Sepolia** (opst)
 - **Unichain Sepolia** (unit)
 
