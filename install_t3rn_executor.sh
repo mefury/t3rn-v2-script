@@ -251,7 +251,8 @@ DEFAULT_RPC_ENDPOINTS='{
     "bast": ["https://base-sepolia-rpc.publicnode.com", "https://base-sepolia.drpc.org"],
     "blst": ["https://sepolia.blast.io", "https://blast-sepolia.drpc.org"],
     "opst": ["https://sepolia.optimism.io", "https://optimism-sepolia.drpc.org"],
-    "unit": ["https://unichain-sepolia.drpc.org", "https://sepolia.unichain.org"]
+    "unit": ["https://unichain-sepolia.drpc.org", "https://sepolia.unichain.org"],
+    "mont": ["https://testnet-rpc.monad.xyz"]
 }'
 
 # Network names and descriptions
@@ -263,6 +264,7 @@ NETWORK_NAMES=(
     ["blst"]="Blast Sepolia"
     ["opst"]="Optimism Sepolia"
     ["unit"]="Unichain Sepolia"
+    ["mont"]="Monad Testnet"
 )
 
 # Ask user if they want to use custom RPC endpoints
@@ -273,7 +275,7 @@ if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
     RPC_ENDPOINTS="{"
     
     # Get custom RPC for each network
-    for network_code in l2rn arbt bast blst opst unit; do
+    for network_code in l2rn arbt bast blst opst unit mont; do
         echo -e "\n${BOLD}${NETWORK_NAMES[$network_code]} (${network_code})${NC}"
         
         # Get primary RPC
@@ -304,7 +306,7 @@ if confirm "Do you want to use custom RPC endpoints? (Default: No)"; then
         RPC_ENDPOINTS+="]"
         
         # Add comma if not last item
-        if [ "$network_code" != "unit" ]; then
+        if [ "$network_code" != "mont" ]; then
             RPC_ENDPOINTS+=", "
         fi
     done

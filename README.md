@@ -127,6 +127,7 @@ The script allows you to configure custom RPC endpoints for each supported netwo
 - **Blast Sepolia** (blst)
 - **Optimism Sepolia** (opst)
 - **Unichain Sepolia** (unit)
+- **Monad Testnet** (mont)
 
 For each network, you can specify:
 - A primary RPC endpoint (required)
