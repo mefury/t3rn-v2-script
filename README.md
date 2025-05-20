@@ -115,7 +115,15 @@ The script asks for the following inputs:
 
 1. **Gas Price**: Maximum gas price in gwei (default: 100)
 2. **Private Key**: Your wallet's private key (required)
-3. **RPC Endpoints**: Choose between default RPCs or set custom endpoints for each chain
+3. **Asset Support**: Option to specify which assets to support (default: all assets)
+4. **RPC Endpoints**: Choose between default RPCs or set custom endpoints for each chain
+
+### Asset Configuration
+
+The script allows you to configure which assets you want to support:
+- By default, all assets are supported (`EXECUTOR_ENABLED_ASSETS="*"`)
+- Optionally, you can specify a comma-separated list of assets (e.g., "USDC,ETH,USDT")
+- If no assets are specified, the script defaults to supporting all assets
 
 ### Custom RPC Configuration
 

@@ -84,7 +84,8 @@ export EXECUTOR_PROCESS_ORDERS_ENABLED=${EXECUTOR_PROCESS_ORDERS_ENABLED}
 export EXECUTOR_PROCESS_CLAIMS_ENABLED=${EXECUTOR_PROCESS_CLAIMS_ENABLED}
 export EXECUTOR_MAX_L3_GAS_PRICE=${EXECUTOR_MAX_L3_GAS_PRICE}
 export PRIVATE_KEY_LOCAL=${PRIVATE_KEY_LOCAL}
-export ENABLED_NETWORKS=${ENABLED_NETWORKS}
+export EXECUTOR_ENABLED_NETWORKS=${EXECUTOR_ENABLED_NETWORKS}
+export EXECUTOR_ENABLED_ASSETS=${EXECUTOR_ENABLED_ASSETS}
 export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=${EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API}
 export RPC_ENDPOINTS='${RPC_ENDPOINTS}'
 EOL
@@ -221,7 +222,7 @@ export LOG_PRETTY="false"
 export EXECUTOR_PROCESS_BIDS_ENABLED="true"
 export EXECUTOR_PROCESS_ORDERS_ENABLED="true"
 export EXECUTOR_PROCESS_CLAIMS_ENABLED="true"
-export ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l2rn"
+export EXECUTOR_ENABLED_NETWORKS="arbitrum-sepolia,base-sepolia,optimism-sepolia,l2rn,blast-sepolia,unichain-sepolia,monad-testnet"
 
 # Ask for gas price
 read -p "Max L3 gas price in gwei (default: 100): " EXECUTOR_MAX_L3_GAS_PRICE
@@ -240,6 +241,23 @@ while [ -z "$PRIVATE_KEY_LOCAL" ]; do
     fi
 done
 export PRIVATE_KEY_LOCAL
+
+# Asset Configuration
+section "Asset Configuration"
+if confirm "Do you want to specify which assets to support? (Default: No - support all assets)"; then
+    echo -e "\n${BOLD}Enter the assets you want to support, separated by commas${NC}"
+    echo -e "Example: USDC,ETH,USDT"
+    read -p "Assets to support: " EXECUTOR_ENABLED_ASSETS
+    if [ -z "$EXECUTOR_ENABLED_ASSETS" ]; then
+        info "No assets specified. Supporting all assets by default."
+        export EXECUTOR_ENABLED_ASSETS="*"
+    else
+        export EXECUTOR_ENABLED_ASSETS
+    fi
+else
+    info "Supporting all assets by default"
+    export EXECUTOR_ENABLED_ASSETS="*"
+fi
 
 # RPC Configuration
 section "RPC Configuration"
